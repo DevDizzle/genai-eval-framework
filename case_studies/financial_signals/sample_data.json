@@ -1,0 +1,56 @@
+{
+  "prompts": [
+    "Generate a market analysis for AAPL based on the following signal data: direction=BULLISH, confidence=0.82, entry=$185.50, target=$195.00, stop=$180.00. Recent earnings: Q3 revenue $81.8B (+2% YoY), EPS $1.26.",
+    "Generate a market analysis for TSLA based on the following signal data: direction=BEARISH, confidence=0.71, entry=$245.00, target=$220.00, stop=$255.00. Recent delivery numbers: 435,059 vehicles in Q3 (-6% QoQ).",
+    "Generate a market analysis for NVDA based on the following signal data: direction=BULLISH, confidence=0.91, entry=$480.00, target=$520.00, stop=$465.00. Recent earnings: Q3 revenue $18.12B (+206% YoY), data center revenue $14.51B.",
+    "Generate a market analysis for JPM based on the following signal data: direction=NEUTRAL, confidence=0.55, entry=$172.00, target=$178.00, stop=$167.00. Recent earnings: Q3 net income $13.15B, ROE 17%, NII $22.9B (+30% YoY).",
+    "Generate a market analysis for DIS based on the following signal data: direction=BULLISH, confidence=0.76, entry=$92.50, target=$105.00, stop=$87.00. Recent earnings: Q4 revenue $21.24B, streaming subscribers 150.2M, parks revenue $8.16B (+13% YoY)."
+  ],
+  "sources": [
+    "AAPL Q3 2024 Earnings: Revenue $81.8 billion, up 2% year-over-year. EPS $1.26 vs $1.23 expected. iPhone revenue $39.3B (-2.5%). Services revenue $21.2B (+14%), new all-time high. Gross margin 45.6%. Cash position $162.1B. Dividend raised 4% to $0.25/share. CEO Tim Cook highlighted strong demand in emerging markets. Analyst consensus price target $195. Forward P/E 28.5x.",
+    "TSLA Q3 2024 Deliveries: 435,059 vehicles delivered, down 6% quarter-over-quarter but up 18% year-over-year. Model Y/3 comprised 95% of deliveries. Production: 430,488 vehicles. Cybertruck deliveries approximately 16,000 units. Global inventory days: 28 days (vs 16 days prior year). Average selling price declined ~5% QoQ. China sales: 157,398 units. Energy storage deployments: 6.9 GWh.",
+    "NVDA Q3 FY2025 Earnings: Revenue $18.12 billion, up 206% year-over-year and 34% quarter-over-quarter. Data center revenue $14.51B (+279% YoY). Gaming revenue $2.86B (+15%). Gross margin 74.0%. EPS $4.02 vs $3.37 expected. Blackwell architecture shipping in Q4. Guidance: Q4 revenue $20B ±2%. CEO Jensen Huang: 'The age of AI is in full steam.' H100 backlog extends into 2025.",
+    "JPM Q3 2024 Earnings: Net income $13.15 billion, EPS $4.33 vs $3.96 expected. Revenue $40.69B. Net interest income $22.9B (+30% YoY). Investment banking fees $1.7B (+45%). Trading revenue: FICC $4.4B, Equities $2.6B. ROE 17%. CET1 ratio 14.3%. Credit costs $1.38B, net charge-offs $2.1B. CEO Jamie Dimon warned of 'significant geopolitical risks.' Assets under management $3.4T.",
+    "DIS Q4 FY2024 Earnings: Revenue $21.24 billion, up 6% YoY. Adjusted EPS $1.14 vs $1.10 expected. Streaming subscribers: Disney+ 150.2M (+700K), Hulu 50.2M, ESPN+ 26.0M. Combined streaming operating income $321M (first-ever profit). Parks & Experiences revenue $8.16B (+13% YoY), operating income $1.66B. Content cost savings of $7.5B achieved ahead of schedule. Forward guidance: mid-single digit revenue growth."
+  ],
+  "model_a": {
+    "id": "signal-gen-v1.2",
+    "outputs": [
+      {
+        "text": "AAPL presents a compelling bullish setup at $185.50 with strong technical and fundamental backing. The company delivered solid Q3 results with revenue of $81.8B, representing 2% year-over-year growth. EPS came in at $1.26, beating consensus. iPhone revenue was approximately $40B, showing resilient demand. The services segment hit a record $21.2B. With the stock trading at 28.5x forward earnings and analyst consensus targeting $195, our $195 target aligns with Street expectations. Risk-reward is favorable with a 5.1:1 ratio on the defined stop at $180."
+      },
+      {
+        "text": "TSLA faces headwinds that support our bearish outlook at $245. Q3 deliveries of 435,059 vehicles represent a 6% sequential decline, raising concerns about demand softening. Notably, the company missed production targets with only 430,488 units produced. Average selling prices fell approximately 5% quarter-over-quarter, suggesting margin compression. Cybertruck deliveries remain modest at around 16,000 units. Morgan Stanley analyst Adam Jonas recently downgraded to Sell with a $150 target, citing valuation concerns. The China market showed 157,398 units sold, below the prior quarter. Our $220 target represents a conservative 10% downside from entry."
+      },
+      {
+        "text": "NVDA is our highest-conviction bullish idea at $480 with a 0.91 confidence score. The AI chipmaker delivered a blowout Q3 with revenue of $18.12B, a staggering 206% year-over-year increase. Data center revenue of $14.51B (+279% YoY) is the clear driver. Goldman Sachs raised their price target to $600 following the results. Gross margins of 74% demonstrate pricing power. Management guided Q4 revenue to $20B, and the upcoming Blackwell architecture should drive the next leg higher. EPS of $4.02 crushed the $3.37 estimate. We see a path to $520 as the market prices in Blackwell revenue."
+      },
+      {
+        "text": "JPM shows mixed signals at $172, keeping us at NEUTRAL with 0.55 confidence. Q3 net income of $13.15B and EPS of $4.33 beat expectations of $3.96. NII surged 30% YoY to $22.9B, but this pace is likely unsustainable as rate cuts begin. Investment banking fees of $1.7B (+45%) show capital markets recovery. Trading was solid with FICC at $4.4B and equities at $2.6B. Credit costs of $1.38B remain manageable. ROE at 17% is industry-leading. However, CEO Jamie Dimon's warning about 'significant geopolitical risks' tempers enthusiasm. Our narrow $172-$178 range reflects the balanced outlook."
+      },
+      {
+        "text": "DIS is setting up for a bullish reversal at $92.50, supported by improving fundamentals. Q4 revenue of $21.24B grew 6% YoY with adjusted EPS of $1.14 beating the $1.10 estimate. The streaming business turned a historic corner with its first-ever combined operating profit of $321M. Disney+ subscribers reached 150.2M, with Hulu at 50.2M. Parks revenue of $8.16B (+13% YoY) demonstrates strong consumer demand. The company achieved $7.5B in content cost savings, and management guided for mid-single digit revenue growth. Bob Iger stated the company is 'entering a new era of growth.' Our $105 target implies 13.5% upside."
+      }
+    ]
+  },
+  "model_b": {
+    "id": "signal-gen-v2.0",
+    "outputs": [
+      {
+        "text": "AAPL presents a bullish setup at $185.50 with our confidence at 0.82. Q3 2024 earnings confirmed the investment thesis: revenue of $81.8B (+2% YoY) with EPS of $1.26 beating the $1.23 consensus estimate. Key strength comes from the Services segment, which hit an all-time record of $21.2B (+14% YoY), offsetting a modest iPhone decline to $39.3B (-2.5%). Gross margin expanded to 45.6%. The company maintains a fortress balance sheet with $162.1B in cash. Management raised the dividend 4% to $0.25/share, signaling confidence. Our $195 target aligns with the analyst consensus price target. The 5.1:1 reward-to-risk ratio with a $180 stop makes this an attractive entry."
+      },
+      {
+        "text": "TSLA warrants a bearish stance at $245 with 0.71 confidence. Q3 deliveries of 435,059 vehicles fell 6% quarter-over-quarter, though still up 18% year-over-year. Production of 430,488 units slightly trailed deliveries, indicating some inventory drawdown. Model Y/3 represented 95% of the mix, with Cybertruck contributing approximately 16,000 units. Average selling prices declined roughly 5% QoQ, pressuring margins. Inventory days expanded to 28 days versus 16 days a year ago, suggesting demand is softening. China volumes of 157,398 units were stable but not accelerating. Energy storage at 6.9 GWh remains a bright spot. Our $220 target reflects the near-term demand headwinds with the $255 stop limiting downside risk."
+      },
+      {
+        "text": "NVDA is our top conviction pick at $480 (0.91 confidence). Q3 FY2025 results were extraordinary: revenue of $18.12B surged 206% YoY and 34% QoQ, with data center revenue of $14.51B jumping 279% YoY as the primary growth engine. Gaming contributed $2.86B (+15%). Gross margins held at an exceptional 74.0%, demonstrating strong pricing power in GPU supply-constrained markets. EPS of $4.02 significantly beat the $3.37 estimate. CEO Jensen Huang highlighted 'the age of AI is in full steam.' Management guided Q4 revenue to approximately $20B (±2%), with the new Blackwell architecture beginning shipments. H100 backlog extends well into 2025. Our $520 target represents continued multiple expansion on accelerating earnings."
+      },
+      {
+        "text": "JPM presents a balanced picture at $172, warranting our NEUTRAL rating (0.55 confidence). Q3 2024 delivered strong results: net income of $13.15B, with EPS of $4.33 exceeding the $3.96 estimate. Net interest income of $22.9B (+30% YoY) was the primary driver, though the rate cycle is turning. Investment banking fees of $1.7B recovered 45% as capital markets reopened. FICC trading revenue of $4.4B and equities of $2.6B were solid. Credit quality metrics are manageable: credit costs of $1.38B with net charge-offs at $2.1B. ROE of 17% and CET1 ratio of 14.3% reflect operational excellence. CEO Jamie Dimon cautioned about 'significant geopolitical risks' ahead. AUM reached $3.4T. Our tight $172-$178 range reflects limited near-term catalysts."
+      },
+      {
+        "text": "DIS offers a compelling bullish entry at $92.50 (0.76 confidence) as the turnaround takes hold. Q4 FY2024 revenue of $21.24B (+6% YoY) with adjusted EPS of $1.14 (vs $1.10 estimate) confirmed improving execution. The milestone achievement: combined streaming profitability of $321M in operating income — a first for the company. Disney+ reached 150.2M subscribers (+700K), Hulu 50.2M, and ESPN+ 26.0M. Parks & Experiences delivered $8.16B in revenue (+13% YoY) with operating income of $1.66B. Management achieved $7.5B in content cost savings ahead of schedule and guided for mid-single digit revenue growth going forward. Our $105 target offers 13.5% upside with risk defined at the $87 stop."
+      }
+    ]
+  }
+}

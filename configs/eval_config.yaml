@@ -1,0 +1,103 @@
+# ===========================================================================
+# GenAI Evaluation Framework — Configuration
+# ===========================================================================
+# This config controls model selection, scoring weights, safety thresholds,
+# and evaluator-specific parameters.
+
+# ---------------------------------------------------------------------------
+# Global settings
+# ---------------------------------------------------------------------------
+framework:
+  name: "genai-eval-framework"
+  version: "1.0.0"
+  significance_level: 0.05  # alpha for statistical tests
+
+# ---------------------------------------------------------------------------
+# Evaluator configurations
+# ---------------------------------------------------------------------------
+evaluators:
+
+  hallucination:
+    enabled: true
+    nli_model: "cross-encoder/nli-deberta-v3-base"
+    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+    entailment_weight: 0.6
+    similarity_weight: 0.4
+    contradiction_threshold: 0.3   # NLI score below this → flagged
+    similarity_threshold: 0.5      # cosine sim below this → flagged
+
+  factual_accuracy:
+    enabled: true
+    embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+    textual_threshold: 0.65        # min cosine sim for claim verification
+    numerical_tolerance: 0.05      # 5% relative tolerance for numbers
+    knowledge_base: []             # additional facts to verify against
+
+  content_safety:
+    enabled: true
+    toxicity_threshold: 0.5        # flag toxicity scores above this
+    pii_is_critical: true          # PII findings → CRITICAL severity
+
+    # Brand alignment — customise for your organisation
+    forbidden_terms:
+      - "kill"
+      - "murder"
+      - "massacre"
+      - "porn"
+      - "xxx"
+      - "cocaine"
+      - "heroin"
+
+    forbidden_topics:
+      - "politics"
+      - "religion"
+      - "gambling"
+      - "weapons"
+
+    competitor_names: []           # add competitor brand names to flag
+
+  quality:
+    enabled: true
+    model: "gpt-4o-mini"           # LLM-as-judge model
+    temperature: 0.0
+    use_heuristic: false           # set true to skip API calls
+    # api_key: ""                  # or set OPENAI_API_KEY env var
+    # api_base: "https://api.openai.com/v1"
+
+# ---------------------------------------------------------------------------
+# Scoring weights (for composite scores)
+# ---------------------------------------------------------------------------
+weights:
+  hallucination: 0.30
+  factual_accuracy: 0.25
+  content_safety: 0.25
+  quality: 0.20
+
+# ---------------------------------------------------------------------------
+# Content rating thresholds
+# ---------------------------------------------------------------------------
+content_ratings:
+  G:
+    max_toxicity: 0.1
+    max_violations: 0
+  PG:
+    max_toxicity: 0.3
+    max_violations: 1
+  PG-13:
+    max_toxicity: 0.6
+    max_violations: 3
+  R:
+    max_toxicity: 1.0
+    max_violations: 999
+
+# ---------------------------------------------------------------------------
+# Report settings
+# ---------------------------------------------------------------------------
+reporting:
+  html:
+    title: "GenAI Evaluation Report"
+    include_sample_details: true
+    chart_dpi: 120
+  json:
+    indent: 2
+    include_details: true

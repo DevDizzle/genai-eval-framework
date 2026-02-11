@@ -1,0 +1,29 @@
+# Reports and outputs
+reports/
+outputs/
+*.html
+
+# Model weights and caches
+models/
+*.bin
+*.pt
+*.safetensors
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
