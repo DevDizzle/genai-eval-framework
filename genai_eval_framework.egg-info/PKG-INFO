@@ -1,0 +1,100 @@
+Metadata-Version: 2.4
+Name: genai-eval-framework
+Version: 0.1.0
+Summary: Evaluation framework and future gating service for Gemini- and GCP-based AI systems.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: detoxify>=0.5.0
+Requires-Dist: fastapi>=0.135.1
+Requires-Dist: google-cloud-firestore>=2.25.0
+Requires-Dist: google-genai>=1.68.0
+Requires-Dist: jinja2>=3.1.0
+Requires-Dist: matplotlib>=3.7.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: scikit-learn>=1.3.0
+Requires-Dist: scipy>=1.11.0
+Requires-Dist: sentence-transformers>=2.2.0
+Requires-Dist: torch>=2.0.0
+Requires-Dist: transformers>=4.35.0
+Requires-Dist: uvicorn>=0.42.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+
+# GenAI Evaluation Gate
+
+**Evaluation gate infrastructure for regression prevention, promotion control, and AI release confidence.**
+
+This repository provides a containerized service and demo UI for evaluating AI outputs (prompts, agents, artifacts) against references, baselines, and rigorous policy rules. It transforms ad-hoc LLM testing into a definitive, API-driven gating decision: `pass`, `fail`, or `human_review`.
+
+## Core Features
+
+- **Evaluation API:** FastAPI-based service to receive candidate outputs and return structured gating decisions.
+- **Decision Engine:** Configurable promotion logic based on aggregate scores, deterministic blocker flags, and baseline regression thresholds.
+- **Extensible Evaluators:** Hallucination, factuality, safety, and quality checks (deterministic + model-based judges).
+- **Demo UI:** A lightweight frontend to interactively demonstrate the evaluation gating workflow.
+- **Containerized:** Ready to build and deploy (e.g., to Google Cloud Run).
+
+## Architecture
+
+The system operates as a single deployable container exposing a REST API and a lightweight demonstration frontend:
+
+1. **API Layer (`src/api.py`):** FastAPI handles incoming requests (`POST /eval/run`), enforcing strict Pydantic contracts (`src/contracts.py`).
+2. **Evaluator Orchestration (`src/benchmark.py`):** Runs the suite of deterministic and judge-based evaluators.
+3. **Decision Engine (`src/decision_engine.py`):** Takes scores, flags, and thresholds to produce the final promotion decision (`pass`, `fail`, `human_review`).
+
+## Local Development (uv)
+
+The project uses `uv` for dependency management.
+
+```bash
+# Sync dependencies
+uv sync
+
+# Run tests
+uv run pytest -v
+
+# Start the local development server
+uv run uvicorn src.api:app --reload --port 8080
+```
+
+Once running, navigate to `http://localhost:8080/demo` to access the interactive UI.
+
+## Demo Flow
+
+The included Demo UI (`/demo` or `/`) showcases the core gating capability.
+
+1. **Load Example:** The demo ships with a pre-loaded example scenario (summarization task).
+2. **Inputs:** Provide the task prompt and source reference.
+3. **Candidate vs Baseline:** Enter the accepted baseline output and the new candidate output.
+4. **Evaluate:** Clicking "Run Evaluation Gate" triggers the API.
+5. **Results:** See the final decision badge (`PASS`, `FAIL`, or `HUMAN_REVIEW`), subscores, flags, and the raw API response explaining *why* the candidate was accepted or rejected.
+
+## Container Build & Run
+
+To run the application in a production-like containerized environment:
+
+```bash
+# Build the Docker image
+docker build -t genai-eval-gate .
+
+# Run the container
+docker run -p 8080:8080 genai-eval-gate
+```
+
+The service and UI will be available at `http://localhost:8080`.
+
+## Roadmap: Toward a Hosted Eval Service
+
+To graduate this local gate into a fully hosted, production-grade service:
+
+1. **GCP Deployment:** Deploy the container to Cloud Run.
+2. **Auth & Security:** Add API key authentication (e.g., via Google API Gateway or custom middleware) and Secret Manager for LLM judge API keys.
+3. **Persistence:** Connect BigQuery or Cloud SQL to log evaluation requests, responses, and historical regression trends.
+4. **CI/CD Integration:** Create GitHub Actions / GitLab CI adapters that call `POST /eval/run` during pipeline execution and fail the build on a `fail` decision.
+5. **Advanced Policy Packs:** Add domain-specific evaluator suites (e.g., financial analysis, medical summarization).
+
+## License
+
+MIT

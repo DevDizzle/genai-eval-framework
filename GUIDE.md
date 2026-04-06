@@ -7,13 +7,11 @@
 ## Step 1: Install Dependencies (15 min)
 
 ```bash
-# Create a virtual environment
-python -m venv .venv
-source .venv/bin/activate
-
-# Install all dependencies
-pip install -r requirements.txt
+# Sync the project environment
+uv sync
 ```
+
+**Default workflow:** use `uv sync`, `uv add`, and `uv run ...`. `requirements.txt` is retained only for compatibility.
 
 **Note:** The first run will download model weights (~500MB for NLI + embedding models). Subsequent runs use cached weights.
 
@@ -25,19 +23,19 @@ The notebook walks through every evaluator individually, then runs the full A/B 
 
 ```bash
 # Option A: Run as a script
-python notebooks/eval_demo.py
+uv run python notebooks/eval_demo.py
 
 # Option B: Open in Jupyter (if installed)
-pip install jupytext jupyter
-jupytext --to notebook notebooks/eval_demo.py
-jupyter notebook notebooks/eval_demo.ipynb
+uv add jupytext jupyter
+uv run jupytext --to notebook notebooks/eval_demo.py
+uv run jupyter notebook notebooks/eval_demo.ipynb
 ```
 
 **What you'll see:**
 - Per-sentence hallucination scores with NLI labels
 - Claim extraction and verification results
 - Toxicity scores, PII detection, content ratings
-- Quality scores (heuristic mode — set `OPENAI_API_KEY` for LLM-as-judge)
+- Quality scores (heuristic mode — set `GEMINI_API_KEY` for LLM-as-judge)
 - A/B comparison with statistical significance tests
 - Generated HTML and JSON reports in `reports/`
 
@@ -71,7 +69,7 @@ Create a JSON file matching the sample data format:
 Then run:
 
 ```bash
-python -m src.benchmark \
+uv run python -m src.benchmark \
   --config configs/eval_config.yaml \
   --data path/to/your_data.json \
   --output reports/your_experiment/
@@ -120,7 +118,8 @@ Import it in `src/evaluators/__init__.py` and it's automatically available.
 For production-quality scoring, enable the LLM judge:
 
 ```bash
-export OPENAI_API_KEY="sk-..."
+export GEMINI_API_KEY="AIza..."
+# or prefer Gemini / Vertex-based judge adapters when those are added to the repo
 ```
 
 Then set `use_heuristic: false` in the config.
@@ -133,12 +132,12 @@ Reports are generated automatically by the benchmark runner. You can also genera
 
 ```bash
 # HTML report with charts
-python -m src.reporters.html_report \
+uv run python -m src.reporters.html_report \
   --input reports/results.json \
   --output reports/report.html
 
 # JSON for CI/CD integration
-python -m src.reporters.json_report \
+uv run python -m src.reporters.json_report \
   --input reports/results.json \
   --output reports/results_formatted.json
 ```
@@ -161,7 +160,8 @@ After customising the framework:
 ## Tips
 
 - **Start with heuristic quality scoring** — it requires no API keys
-- **Run tests** with `pytest tests/ -v` to verify everything works
+- **Run tests** with `uv run pytest tests/ -v` to verify everything works
+- **Read governance** in `.gemini/GEMINI.md` and `docs/` before making architecture-level changes
 - **The HTML report** is self-contained — share it as a single file
 - **For CI/CD**, use the JSON report's `ci.passed` boolean as a quality gate
 - **Scale up** by adding more samples — statistical tests become more powerful with n > 30

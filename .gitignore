@@ -1,7 +1,6 @@
 # Reports and outputs
 reports/
 outputs/
-*.html
 
 # Model weights and caches
 models/

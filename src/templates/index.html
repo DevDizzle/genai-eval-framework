@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Evaluation Gate | Evan Parra</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="layout">
+        <main class="site-main">
+            <div class="hero-section">
+                <h1 class="hero-title">Evaluation Gate</h1>
+                <p class="hero-subtitle">Automated regression prevention and promotion control for AI systems. Ensure generation quality before shipping.</p>
+            </div>
+
+            <div class="grid">
+                <!-- LEFT COLUMN: INPUTS -->
+                <div class="card">
+                    <h2>Evaluation Scenario</h2>
+                    
+                    <div class="form-group">
+                        <label>Task / Prompt</label>
+                        <textarea id="prompt" rows="2" placeholder="e.g. Summarize the meeting notes.">{{ example.prompt }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Source / Reference Text</label>
+                        <textarea id="source" rows="4" placeholder="Inject context or retrieved documents here.">{{ example.source }}</textarea>
+                    </div>
+                    
+                    <h2 style="margin-top: 2rem;">Comparison</h2>
+                    
+                    <div class="form-group">
+                        <label>Baseline Output (Current Version)</label>
+                        <textarea id="baseline" rows="3">{{ example.baseline_output }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Candidate Output (New Version)</label>
+                        <textarea id="candidate" rows="3">{{ example.candidate_output }}</textarea>
+                    </div>
+
+                    <h2 style="margin-top: 2rem;">Metadata (Optional)</h2>
+                    <div class="metadata-grid">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Suite Version</label>
+                            <input type="text" id="suite_version" value="v1.2.0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Prompt Version</label>
+                            <input type="text" id="prompt_version" value="v2.0-rc1">
+                        </div>
+                    </div>
+
+                    <button class="btn" id="run-btn" onclick="runEval()">Run Quality Gate</button>
+                </div>
+
+                <!-- RIGHT COLUMN: RESULTS & HISTORY -->
+                <div>
+                    <div class="card" id="results-panel">
+                        <h2>Gate Decision</h2>
+                        
+                        <div id="loading" style="display: none; text-align: center; padding: 2rem 0; color: var(--text-muted);">
+                            <div style="margin-bottom: 1rem;"><div class="spinner" style="border-color: rgba(0,85,255,0.2); border-top-color: var(--primary-color);"></div></div>
+                            Running evaluation suite...<br>
+                            <small>Processing rules and LLM judges.</small>
+                        </div>
+                        
+                        <div id="results">
+                            <div class="decision-header">
+                                <h3>Result:</h3>
+                                <span id="decision-badge" class="badge"></span>
+                            </div>
+
+                            <div class="rationale-block">
+                                <span class="rationale-title">Rationale</span>
+                                <span id="reason-text"></span>
+                            </div>
+                            
+                            <div style="margin-bottom: 1.5rem;">
+                                <span id="method-badge" class="badge badge-method">Evaluators: Running...</span>
+                            </div>
+                            
+                            <div class="grid" style="gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <div>
+                                    <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem;">Score Breakdown</h4>
+                                    <div id="score-container"></div>
+                                </div>
+                                <div>
+                                    <h4 style="margin: 0 0 0.75rem 0; font-size: 1rem;">Policy Flags</h4>
+                                    <ul id="flags-list" style="margin: 0; padding-left: 1.25rem; font-size: 0.95rem;"></ul>
+                                </div>
+                            </div>
+                            
+                            <details>
+                                <summary style="cursor: pointer; font-weight: 600; color: var(--primary-color); margin-bottom: 0.5rem;">View Raw JSON Response</summary>
+                                <pre id="raw-response" style="margin-top: 0.5rem;"></pre>
+                            </details>
+                        </div>
+
+                        <div id="empty-state" style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
+                            Ready to evaluate. Enter a scenario and click run.
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Recent Executions</h2>
+                        {% if recent_runs %}
+                        <ul class="history-list">
+                            {% for run in recent_runs %}
+                            <li class="history-item">
+                                <div>
+                                    <span class="badge {% if run.decision == 'pass' %}badge-pass{% elif run.decision == 'fail' %}badge-fail{% else %}badge-human{% endif %}" style="margin-right: 0.5rem;">
+                                        {{ run.decision }}
+                                    </span>
+                                    <span style="font-size: 0.9rem; color: var(--text-muted);">Score: {{ "%.2f"|format(run.aggregate_score) }}</span>
+                                </div>
+                                <a href="/eval/runs/{{ run.run_id }}" target="_blank">Payload JSON</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">No recent runs recorded. Persistence may be operating in-memory.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>Evaluation Gate Infrastructure • Part of the <a href="https://evanparra.ai" target="_blank">Evan Parra</a> AI Systems suite.</p>
+        </footer>
+    </div>
+
+    <script>
+        async function runEval() {
+            const btn = document.getElementById('run-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner"></div> Processing...';
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'none';
+            
+            const payload = {
+                suite_id: "default-quality-gate",
+                task_type: "summary",
+                input: {
+                    prompt: document.getElementById('prompt').value,
+                    source: document.getElementById('source').value
+                },
+                candidate: {
+                    id: "candidate-v2",
+                    output: document.getElementById('candidate').value
+                },
+                baseline: {
+                    id: "baseline-v1",
+                    output: document.getElementById('baseline').value
+                },
+                thresholds: {
+                    min_score: 0.70,
+                    block_on_flags: ["hallucination", "safety", "factuality_failure", "quality:coherence"]
+                },
+                version_metadata: {
+                    suite_version: document.getElementById('suite_version').value,
+                    prompt_version: document.getElementById('prompt_version').value
+                },
+                store_full_payloads: false // default safe
+            };
+
+            try {
+                const response = await fetch('/eval/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                
+                const badge = document.getElementById('decision-badge');
+                badge.innerText = data.decision;
+                badge.className = 'badge';
+                if (data.decision === 'pass') badge.classList.add('badge-pass');
+                else if (data.decision === 'fail') badge.classList.add('badge-fail');
+                else badge.classList.add('badge-human');
+                
+                document.getElementById('reason-text').innerText = data.reason;
+                document.getElementById('method-badge').innerText = "Evaluators: " + (data.evaluator_method || "Deterministic Evaluators");
+
+                let scoreHtml = `<div class="score-row"><strong>Aggregate</strong><strong>${data.aggregate_score.toFixed(2)}</strong></div>`;
+                for (const [key, val] of Object.entries(data.subscores)) {
+                    scoreHtml += `<div class="score-row"><span style="color: var(--text-muted);">${key}</span><span>${val.toFixed(2)}</span></div>`;
+                }
+                document.getElementById('score-container').innerHTML = scoreHtml;
+                
+                const flagsList = document.getElementById('flags-list');
+                flagsList.innerHTML = '';
+                if (data.flags.length === 0) {
+                    flagsList.innerHTML = '<li style="color: var(--text-muted); list-style: none; margin-left: -1.25rem;"><em>No flags raised</em></li>';
+                } else {
+                    data.flags.forEach(f => {
+                        const li = document.createElement('li');
+                        li.innerText = f;
+                        li.style.color = 'var(--color-fail)';
+                        flagsList.appendChild(li);
+                    });
+                }
+                
+                document.getElementById('raw-response').innerText = JSON.stringify(data, null, 2);
+                
+            } catch (err) {
+                alert("Error running evaluation: " + err);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Run Quality Gate';
+            }
+        }
+    </script>
+</body>
+</html>

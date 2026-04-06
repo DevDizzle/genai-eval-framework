@@ -18,7 +18,7 @@ framework:
 evaluators:
 
   hallucination:
-    enabled: true
+    enabled: false
     nli_model: "cross-encoder/nli-deberta-v3-base"
     embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
     entailment_weight: 0.6
@@ -27,14 +27,14 @@ evaluators:
     similarity_threshold: 0.5      # cosine sim below this → flagged
 
   factual_accuracy:
-    enabled: true
+    enabled: false
     embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
     textual_threshold: 0.65        # min cosine sim for claim verification
     numerical_tolerance: 0.05      # 5% relative tolerance for numbers
     knowledge_base: []             # additional facts to verify against
 
   content_safety:
-    enabled: true
+    enabled: false
     toxicity_threshold: 0.5        # flag toxicity scores above this
     pii_is_critical: true          # PII findings → CRITICAL severity
 
@@ -58,11 +58,10 @@ evaluators:
 
   quality:
     enabled: true
-    model: "gpt-4o-mini"           # LLM-as-judge model
+    model: "gemini-3-pro-preview"  # LLM-as-judge model
     temperature: 0.0
     use_heuristic: false           # set true to skip API calls
-    # api_key: ""                  # or set OPENAI_API_KEY env var
-    # api_base: "https://api.openai.com/v1"
+    # api_key: ""                  # or set GEMINI_API_KEY env var
 
 # ---------------------------------------------------------------------------
 # Scoring weights (for composite scores)
