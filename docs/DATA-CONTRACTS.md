@@ -1,9 +1,7 @@
 # DATA-CONTRACTS.md
 
 ## Current Input Shape
-Today the benchmark runner consumes dataset-oriented JSON with prompts, sources, and outputs for model A / model B comparisons.
-
-## Recommended Future Contracts
+The service exposes a FastAPI endpoint `POST /eval/run` that enforces strict Pydantic contracts.
 
 ### EvalRunRequest
 ```json
@@ -20,7 +18,8 @@ Today the benchmark runner consumes dataset-oriented JSON with prompts, sources,
   },
   "baseline": {
     "id": "agent-v12",
-    "output": "..."
+    "output": "...",
+    "aggregate_score": 0.82
   },
   "reference": {
     "gold_output": "...",
@@ -35,8 +34,11 @@ Today the benchmark runner consumes dataset-oriented JSON with prompts, sources,
   },
   "metadata": {
     "project": "genai-eval-framework",
-    "prompt_version": "v13"
-  }
+    "prompt_version": "v13",
+    "suite_version": "1.0",
+    "commit_sha": "abc1234"
+  },
+  "store_full_payloads": false
 }
 ```
 
@@ -46,19 +48,21 @@ Today the benchmark runner consumes dataset-oriented JSON with prompts, sources,
   "run_id": "uuid",
   "status": "completed",
   "aggregate_score": 0.94,
-  "subscores": {
+  "sub_scores": {
     "factuality": 0.97,
     "safety": 0.99,
     "quality": 0.88
   },
   "flags": [],
   "decision": "pass",
-  "reason": "candidate improved aggregate score with no critical regressions"
+  "reason": "Candidate meets or exceeds baseline aggregate score with no critical regressions",
+  "evaluator_details": {}
 }
 ```
 
 ## Contract Rules
-- Inputs must be validated at ingress.
+- Inputs must be validated at ingress using Pydantic.
 - Evaluator outputs must have stable field names.
 - Promotion decisions must include machine-readable reasons.
-- Metadata should be optional but encouraged for auditability.
+- Metadata is optional but strongly encouraged for auditability and apples-to-apples baseline comparisons.
+- By default, `store_full_payloads` is false to prevent persisting sensitive prompts or outputs to the database.

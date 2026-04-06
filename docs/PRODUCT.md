@@ -1,7 +1,7 @@
 # PRODUCT.md
 
 ## Product Thesis
-This repo should evolve into **evals-as-a-gate for AI systems**: a service that scores candidate outputs, detects regressions, and decides whether prompts, agents, or generated artifacts are promotable.
+This repo acts as an **evals-as-a-gate for AI systems**: a service that scores candidate outputs, detects regressions, and decides whether prompts, agents, or generated artifacts are promotable.
 
 ## Primary Value Proposition
 Teams already inspect LLM outputs manually in tools like ChatGPT or Gemini. This system turns that ad hoc review into:
@@ -19,23 +19,22 @@ Teams already inspect LLM outputs manually in tools like ChatGPT or Gemini. This
 
 ## Core Use Cases
 1. Candidate vs baseline evaluation
-2. Golden-set benchmark runs
+2. Golden-set benchmark runs via CI/CD
 3. Policy checks for generated artifacts
 4. Regression prevention in CI/CD
 5. Human-review fallback for borderline runs
 
-## Near-Term V1
-- containerized FastAPI service for evaluation runs
-- interactive UI demo served natively
-- stable eval-run contract
-- baseline vs candidate comparison
-- promotion decision output
-- deterministic + judge-based evaluators (Gemini)
-- Firestore persistence for run history
+## Current Features
+- Containerized FastAPI service for evaluation runs
+- Interactive UI demo served natively
+- Stable eval-run contract
+- Baseline vs candidate comparison (regression detection)
+- Promotion decision output (`pass`, `fail`, `human_review`)
+- Deterministic + judge-based evaluators (using Gemini)
+- Firestore persistence for run history with version metadata
 
 ## Future Directions
-- hosted evaluation API
-- policy packs by domain
-- BigQuery-backed run history
-- dashboarding
-- webhooks / GitHub checks / deployment gates
+- Hosted evaluation API for multi-tenant usage
+- Policy packs by domain
+- BigQuery-backed run history and dashboarding
+- Webhooks / GitHub checks / deployment gates native integration

@@ -2,7 +2,7 @@
 
 ## Testing Goals
 - Protect evaluator correctness.
-- Prevent regressions in benchmark aggregation.
+- Prevent regressions in decision engine and aggregation.
 - Ensure promotion decisions remain stable and explainable.
 - Verify docs and commands reflect actual project setup.
 
@@ -10,22 +10,22 @@
 1. **Unit tests**
    - evaluator logic
    - threshold handling
+   - decision engine rules
    - score aggregation
-2. **Golden tests**
-   - stable sample datasets with expected pass/fail outcomes
-3. **Contract tests**
-   - request/response schema validation for future API layer
-4. **Smoke tests**
-   - benchmark run on sample case study
+2. **Contract tests**
+   - request/response schema validation for the FastAPI layer
+3. **Integration tests**
+   - api endpoint testing
+   - persistence testing (with mock database)
 
 ## Default Commands
 ```bash
-uv run pytest -v
-uv run python -m src.benchmark --config configs/eval_config.yaml --data case_studies/financial_signals/sample_data.json --output reports/
+uv sync
+uv run pytest tests/ -v
 ```
 
 ## Quality Gate Direction
-Future acceptance checks should include:
+Acceptance checks for the evaluation service itself include:
 - no critical evaluator failures
 - aggregate score threshold met
 - no regression on blocker dimensions
